@@ -6,6 +6,7 @@ import (
 	"strings"
 	"text/template"
 	"time"
+	"os"
 	// Embedded so a named zone resolves the same on every release target. Windows has no system
 	// zoneinfo and an end user has no GOROOT, so LoadLocation would fail there without this.
 	_ "time/tzdata"
@@ -20,6 +21,7 @@ func NewTemplater() *Templater {
 		"formatPathBytes": formatPathBytes,
 		"now":             time.Now,
 		"date":            formatDate,
+		"fromFile":        readFromFile,
 	}}
 }
 
@@ -91,6 +93,14 @@ func formatDate(value any, layout string, zone ...string) (string, error) {
 		t = t.In(loc)
 	}
 	return t.Format(layout), nil
+}
+
+func readFromFile(pathname string) (string, error) {
+	data, err := os.ReadFile(pathname)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }
 
 // asTime reads the numeric forms a timestamp can arrive as. Zero stays zero rather than becoming

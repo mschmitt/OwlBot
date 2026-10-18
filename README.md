@@ -307,6 +307,7 @@ Private `$` regions are not supported, because a private region's key cannot be 
 - `formatPathBytes`: formats raw path hashes into a readable string, joined by an optional separator (`Direct` when there is no path).
 - `now`: the current time, as a value you can format or take parts of.
 - `date`: formats a time in a layout, optionally in a named zone.
+- `fromFile`: Reads and includes contents of a local file.
 
 `formatPathBytes` takes the path hashes and an optional separator, defaulting
 to `", "`:
