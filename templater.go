@@ -7,6 +7,7 @@ import (
 	"text/template"
 	"time"
 	"os"
+	"os/exec"
 	// Embedded so a named zone resolves the same on every release target. Windows has no system
 	// zoneinfo and an end user has no GOROOT, so LoadLocation would fail there without this.
 	_ "time/tzdata"
@@ -22,6 +23,7 @@ func NewTemplater() *Templater {
 		"now":             time.Now,
 		"date":            formatDate,
 		"fromFile":        readFromFile,
+		"exec":		   execCmd,
 	}}
 }
 
@@ -97,6 +99,14 @@ func formatDate(value any, layout string, zone ...string) (string, error) {
 
 func readFromFile(pathname string) (string, error) {
 	data, err := os.ReadFile(pathname)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func execCmd(cmd string, args ...string) (string, error) {
+	data, err := exec.Command(cmd, args...).Output()
 	if err != nil {
 		return "", err
 	}

@@ -308,6 +308,7 @@ Private `$` regions are not supported, because a private region's key cannot be 
 - `now`: the current time, as a value you can format or take parts of.
 - `date`: formats a time in a layout, optionally in a named zone.
 - `fromFile`: Reads and includes contents of a local file.
+- `exec`: Executes a command on the system running the bot and returns its output.
 
 `formatPathBytes` takes the path hashes and an optional separator, defaulting
 to `", "`:
@@ -343,6 +344,27 @@ binary, so a named zone resolves the same on every platform.
 Leaving the zone off uses whatever the process treats as local, which in a
 container is UTC unless `TZ` is set. Name the zone in the template when it has
 to be right regardless of where the bot runs.
+
+``exec `uptime` `` executes a command and returns the output, local uptime in this case.
+
+``exec `/home/bot/.local/owlbot/some_helper.py` .Message `` passes the entire message to the given command.
+
+A helper script to retrieve METAR weather:
+
+```
+#!/usr/bin/env bash
+
+location="${1/\!metar /}"
+printf -v url "https://aviationweather.gov/api/data/metar?ids=%s" "${location}"
+curl -s "${url}"
+```
+
+Integrate like:
+
+```
+match = ["(?i)!metar [a-zA-Z]+$"]
+template = "@[{{.Sender}}] {{ exec `/home/bot/.local/owlbot/metar.sh` .Message }}"
+```
 
 ## Example Configs
 
